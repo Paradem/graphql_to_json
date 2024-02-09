@@ -1,0 +1,8 @@
+{
+  "name": "graphqls_conversion",
+  "module": "index.js",
+  "type": "module",
+  "dependencies": {
+    "graphql": "^16.8.1"
+  }
+}
