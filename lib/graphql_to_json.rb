@@ -5,12 +5,19 @@ require_relative "graphql_to_json/version"
 module GraphqlToJson
   class Error < StandardError; end
 
+  INPUT = "#{__dir__}/input.graphql"
+  OUTPUT = "#{__dir__}/output.json"
+
   def self.convert(graphql)
     File.write("#{__dir__}/input.graphql", parse_many(graphql))
-    exec "node #{__dir__}/index.js"
-    File.delete("#{__dir__}/input.graphql")
+    `node #{__dir__}/index.js`
+  ensure
+    output = (File.read(OUTPUT) if File.exist?(OUTPUT))
 
-    File.read("#{__dir__}/output.json")
+    File.delete(INPUT) if File.exist?(INPUT)
+    File.delete(OUTPUT) if File.exist?(OUTPUT)
+
+    output
   end
 
   def self.parse_many(gqls)
