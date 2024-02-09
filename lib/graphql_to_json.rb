@@ -1,23 +1,24 @@
-# frozen_string_literal: true
+require "securerandom"
 
 require_relative "graphql_to_json/version"
 
 module GraphqlToJson
   class Error < StandardError; end
 
-  INPUT = "#{__dir__}/input.graphql"
-  OUTPUT = "#{__dir__}/output.json"
-
   def self.convert(graphql)
-    File.write("#{__dir__}/input.graphql", parse_many(graphql))
-    `node #{__dir__}/index.js`
-  ensure
-    output = (File.read(OUTPUT) if File.exist?(OUTPUT))
+    name = SecureRandom.uuid
+    input = "#{__dir__}/#{name}.graphql"
+    output = "#{__dir__}/#{name}.json"
 
-    File.delete(INPUT) if File.exist?(INPUT)
-    File.delete(OUTPUT) if File.exist?(OUTPUT)
+    File.write("#{__dir__}/#{name}.graphql", parse_many(graphql))
+    `node #{__dir__}/index.js #{name}`
 
-    output
+    result = (File.read(output) if File.exist?(output))
+
+    File.delete(input) if File.exist?(input)
+    File.delete(output) if File.exist?(output)
+
+    result
   end
 
   def self.parse_many(gqls)
