@@ -12,13 +12,10 @@ module GraphqlToJson
 
     File.write("#{__dir__}/#{name}.graphql", parse_many(graphql))
     `node #{__dir__}/index.js #{name}`
-
-    result = (File.read(output) if File.exist?(output))
-
+    File.read(output)
+  ensure
     File.delete(input) if File.exist?(input)
     File.delete(output) if File.exist?(output)
-
-    result
   end
 
   def self.parse_many(gqls)
